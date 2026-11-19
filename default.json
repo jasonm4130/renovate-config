@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared defaults: a 7-day wait before any release is proposed, one grouped non-major PR a week that merges itself on green CI, majors held for review, security fixes without the wait.",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "timezone": "Australia/Brisbane",
+  "schedule": ["before 6am on Monday"],
+  "minimumReleaseAge": "7 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "internalChecksFilter": "strict",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "description": "Security fixes skip the wait and the weekly schedule. Whether they merge themselves is left to packageRules, so a repo that holds automerge holds these too.",
+    "labels": ["security"],
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null
+  },
+  "packageRules": [
+    {
+      "description": "config:recommended adds security:minimumReleaseAgeNpm (3 days for npm), which would override the 7 days above.",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "Non-major updates: one PR per repo per week, merged when every check passes. Renovate does not automerge a branch with no checks.",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "groupName": "non-major dependencies",
+      "groupSlug": "non-major",
+      "automerge": true
+    },
+    {
+      "description": "Below 1.0 a minor release may break: it still joins the group but stops the group merging itself.",
+      "matchUpdateTypes": ["minor"],
+      "matchCurrentVersion": "/^v?0\\./",
+      "automerge": false
+    },
+    {
+      "description": "Majors get their own PR and wait for review.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["major"]
+    }
+  ]
+}

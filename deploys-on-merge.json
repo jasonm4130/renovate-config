@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "For repos where merging the default branch deploys something: nothing merges itself. Extend after the default preset.",
+  "packageRules": [
+    {
+      "description": "Merging deploys, so every update waits for review.",
+      "matchPackageNames": ["*"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    }
+  ]
+}
